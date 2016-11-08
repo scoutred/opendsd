@@ -42,7 +42,7 @@ var applicationTestData = `
 </extract_results>
 `
 
-func TestParseApplications(t *testing.T) {
+func TestDecodApplications(t *testing.T) {
 	var err error
 
 	buf := bytes.NewBufferString(applicationTestData)

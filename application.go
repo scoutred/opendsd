@@ -11,42 +11,6 @@ const (
 	ApplicationDatestampFormat = "01/02/2006"
 )
 
-type ApplicationTimestamp time.Time
-
-func (at *ApplicationTimestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var val string
-	d.DecodeElement(&val, &start)
-
-	v, err := time.Parse(ApplicationTimestampFormat, val)
-	if err != nil {
-		return err
-	}
-	*at = ApplicationTimestamp(v)
-	return nil
-}
-
-func (at ApplicationTimestamp) String() string {
-	return time.Time(at).Format(time.RFC3339)
-}
-
-type ApplicationDatestamp time.Time
-
-func (ad ApplicationDatestamp) String() string {
-	return time.Time(ad).Format(time.RFC3339)
-}
-
-func (ad *ApplicationDatestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var val string
-	d.DecodeElement(&val, &start)
-
-	v, err := time.Parse(ApplicationDatestampFormat, val)
-	if err != nil {
-		return err
-	}
-	*ad = ApplicationDatestamp(v)
-	return nil
-}
-
 type Applications struct {
 	Metadata  Metadata              `xml:"metadata"`
 	Approvals []ApplicationApproval `xml:"approvals>approval"`
@@ -91,4 +55,45 @@ func DecodeApplication(r io.Reader) (*Applications, error) {
 	}
 
 	return &applications, nil
+}
+
+type ApplicationTimestamp time.Time
+
+func (at *ApplicationTimestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var val string
+	d.DecodeElement(&val, &start)
+
+	v, err := time.Parse(ApplicationTimestampFormat, val)
+	if err != nil {
+		return err
+	}
+	*at = ApplicationTimestamp(v)
+	return nil
+}
+
+func (at ApplicationTimestamp) String() string {
+	return time.Time(at).Format(time.RFC3339)
+}
+
+type ApplicationDatestamp time.Time
+
+func (ad ApplicationDatestamp) String() string {
+	return time.Time(ad).Format(time.RFC3339)
+}
+
+func (ad *ApplicationDatestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var tstr string
+	d.DecodeElement(&tstr, &start)
+
+	//	empty time check
+	if tstr == "null" || tstr == "" {
+		return nil
+	}
+
+	v, err := time.Parse(ApplicationDatestampFormat, tstr)
+	if err != nil {
+		return err
+	}
+	*ad = ApplicationDatestamp(v)
+	return nil
 }

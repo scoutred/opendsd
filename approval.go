@@ -3,46 +3,42 @@ package opendsd
 import (
 	"encoding/json"
 	"io"
-	"strings"
-	"time"
 )
 
 const (
-	ApprovalEndpoint               = "http://opendsd.sandiego.gov/api/approval/:id"
-	ApprovalExtractTimestampFormat = "01/02/2006 3:04:05 PM"
-	ApprovalTimestampFormat        = "2006-01-02T15:04:05"
+	ApprovalEndpoint = "http://opendsd.sandiego.gov/api/approval/:id"
 )
 
 type Approval struct {
 	Header []struct {
-		Jurisdiction  string                   `json:"Jurisdiction"`
-		Agency        string                   `json:"Agency"`
-		AgencyAddress string                   `json:"AgencyAddress"`
-		AgencyWebsite string                   `json:"AgencyWebsite"`
-		ExtractSystem string                   `json:"ExtractSystem"`
-		ExtractDate   ApprovalExtractTimestamp `json:"ExtractDate"`
-		ExtractQuery  string                   `json:"ExtractQuery"`
+		Jurisdiction  string                 `json:"Jurisdiction"`
+		Agency        string                 `json:"Agency"`
+		AgencyAddress string                 `json:"AgencyAddress"`
+		AgencyWebsite string                 `json:"AgencyWebsite"`
+		ExtractSystem string                 `json:"ExtractSystem"`
+		ExtractDate   HeaderExtractTimestamp `json:"ExtractDate"`
+		ExtractQuery  string                 `json:"ExtractQuery"`
 	} `json:"Header"`
 	ApprovalID int `json:"ApprovalId"`
 	Project    struct {
-		Customers             interface{}       `json:"Customers"`
-		ReviewCycles          interface{}       `json:"ReviewCycles"`
-		Jobs                  interface{}       `json:"Jobs"`
-		Fees                  interface{}       `json:"Fees"`
-		Invoices              interface{}       `json:"Invoices"`
-		ProjectID             int               `json:"ProjectId"`
-		Title                 string            `json:"Title"`
-		Scope                 string            `json:"Scope"`
-		ApplicationExpiration string            `json:"ApplicationExpiration"`
-		ApplicationExpired    bool              `json:"ApplicationExpired"`
-		AdminHold             bool              `json:"AdminHold"`
-		DevelopmentID         int               `json:"DevelopmentId"`
-		DevelopmentTitle      string            `json:"DevelopmentTitle"`
-		ApplicationDate       ApprovalTimestamp `json:"ApplicationDate"`
-		AccountNum            string            `json:"AccountNum"`
-		JobOrderNum           interface{}       `json:"JobOrderNum"`
-		Header                interface{}       `json:"Header"`
-		ProjectManagerID      int               `json:"ProjectManagerId"`
+		Customers             interface{} `json:"Customers"`
+		ReviewCycles          interface{} `json:"ReviewCycles"`
+		Jobs                  interface{} `json:"Jobs"`
+		Fees                  interface{} `json:"Fees"`
+		Invoices              interface{} `json:"Invoices"`
+		ProjectID             int         `json:"ProjectId"`
+		Title                 string      `json:"Title"`
+		Scope                 string      `json:"Scope"`
+		ApplicationExpiration string      `json:"ApplicationExpiration"`
+		ApplicationExpired    bool        `json:"ApplicationExpired"`
+		AdminHold             bool        `json:"AdminHold"`
+		DevelopmentID         int         `json:"DevelopmentId"`
+		DevelopmentTitle      string      `json:"DevelopmentTitle"`
+		ApplicationDate       Timestamp   `json:"ApplicationDate"`
+		AccountNum            string      `json:"AccountNum"`
+		JobOrderNum           interface{} `json:"JobOrderNum"`
+		Header                interface{} `json:"Header"`
+		ProjectManagerID      int         `json:"ProjectManagerId"`
 		ProjectManager        struct {
 			ProjectManagerID int    `json:"ProjectManagerId"`
 			Name             string `json:"Name"`
@@ -74,20 +70,20 @@ type Approval struct {
 		BCCode   string `json:"BCCode"`
 	} `json:"BCCodes"`
 	Approval struct {
-		JobID               int               `json:"JobId"`
-		ApprovalID          int               `json:"ApprovalId"`
-		Type                string            `json:"Type"`
-		Status              string            `json:"Status"`
-		Scope               string            `json:"Scope"`
-		Depiction           string            `json:"Depiction"`
-		IssuedBy            string            `json:"IssuedBy"`
-		IssueDate           ApprovalTimestamp `json:"IssueDate"`
-		FirstInspectionDate ApprovalTimestamp `json:"FirstInspectionDate"`
-		CompleteCancelDate  ApprovalTimestamp `json:"CompleteCancelDate"`
-		PermitHolder        string            `json:"PermitHolder"`
-		NetChangeDU         string            `json:"NetChangeDU"`
-		Valuation           string            `json:"Valuation"`
-		SquareFootage       interface{}       `json:"SquareFootage"`
+		JobID               int         `json:"JobId"`
+		ApprovalID          int         `json:"ApprovalId"`
+		Type                string      `json:"Type"`
+		Status              string      `json:"Status"`
+		Scope               string      `json:"Scope"`
+		Depiction           string      `json:"Depiction"`
+		IssuedBy            string      `json:"IssuedBy"`
+		IssueDate           Timestamp   `json:"IssueDate"`
+		FirstInspectionDate Timestamp   `json:"FirstInspectionDate"`
+		CompleteCancelDate  Timestamp   `json:"CompleteCancelDate"`
+		PermitHolder        string      `json:"PermitHolder"`
+		NetChangeDU         string      `json:"NetChangeDU"`
+		Valuation           string      `json:"Valuation"`
+		SquareFootage       interface{} `json:"SquareFootage"`
 	} `json:"Approval"`
 	Inspections []struct {
 		ApprovalID            int           `json:"ApprovalId"`
@@ -151,40 +147,6 @@ type Approval struct {
 		AddedBy           string `json:"AddedBy"`
 		AddedDt           string `json:"AddedDt"`
 	} `json:"DependantApprovals"`
-}
-
-type ApprovalExtractTimestamp time.Time
-
-func (aet *ApprovalExtractTimestamp) UnmarshalJSON(data []byte) error {
-	tstr := strings.Trim(string(data), "\"")
-	if tstr == "null" {
-		return nil
-	}
-
-	v, err := time.Parse(ApprovalExtractTimestampFormat, tstr)
-	if err != nil {
-		return err
-	}
-	*aet = ApprovalExtractTimestamp(v)
-
-	return nil
-}
-
-type ApprovalTimestamp time.Time
-
-func (at *ApprovalTimestamp) UnmarshalJSON(data []byte) error {
-	tstr := strings.Trim(string(data), "\"")
-	if tstr == "null" {
-		return nil
-	}
-
-	v, err := time.Parse(ApprovalTimestampFormat, tstr)
-	if err != nil {
-		return err
-	}
-	*at = ApprovalTimestamp(v)
-
-	return nil
 }
 
 func DecodeApproval(r io.Reader) (*Approval, error) {

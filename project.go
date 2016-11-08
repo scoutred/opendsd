@@ -1,5 +1,14 @@
 package opendsd
 
+import (
+	"encoding/json"
+	"io"
+)
+
+const (
+	ProjectEndpoint = "http://opendsd.sandiego.gov/api/project/:id"
+)
+
 type Project struct {
 	Customers []struct {
 		ProjectID  int    `json:"ProjectId"`
@@ -47,9 +56,9 @@ type Project struct {
 			Scope               string      `json:"Scope"`
 			Depiction           string      `json:"Depiction"`
 			IssuedBy            string      `json:"IssuedBy"`
-			IssueDate           interface{} `json:"IssueDate"`
-			FirstInspectionDate interface{} `json:"FirstInspectionDate"`
-			CompleteCancelDate  interface{} `json:"CompleteCancelDate"`
+			IssueDate           Timestamp   `json:"IssueDate"`
+			FirstInspectionDate Timestamp   `json:"FirstInspectionDate"`
+			CompleteCancelDate  Timestamp   `json:"CompleteCancelDate"`
 			PermitHolder        string      `json:"PermitHolder"`
 			NetChangeDU         string      `json:"NetChangeDU"`
 			Valuation           string      `json:"Valuation"`
@@ -88,22 +97,22 @@ type Project struct {
 	ProjectID             int         `json:"ProjectId"`
 	Title                 string      `json:"Title"`
 	Scope                 string      `json:"Scope"`
-	ApplicationExpiration string      `json:"ApplicationExpiration"`
+	ApplicationExpiration Timestamp   `json:"ApplicationExpiration"`
 	ApplicationExpired    bool        `json:"ApplicationExpired"`
 	AdminHold             bool        `json:"AdminHold"`
 	DevelopmentID         int         `json:"DevelopmentId"`
 	DevelopmentTitle      string      `json:"DevelopmentTitle"`
-	ApplicationDate       string      `json:"ApplicationDate"`
+	ApplicationDate       Timestamp   `json:"ApplicationDate"`
 	AccountNum            string      `json:"AccountNum"`
 	JobOrderNum           interface{} `json:"JobOrderNum"`
 	Header                []struct {
-		Jurisdiction  string `json:"Jurisdiction"`
-		Agency        string `json:"Agency"`
-		AgencyAddress string `json:"AgencyAddress"`
-		AgencyWebsite string `json:"AgencyWebsite"`
-		ExtractSystem string `json:"ExtractSystem"`
-		ExtractDate   string `json:"ExtractDate"`
-		ExtractQuery  string `json:"ExtractQuery"`
+		Jurisdiction  string                 `json:"Jurisdiction"`
+		Agency        string                 `json:"Agency"`
+		AgencyAddress string                 `json:"AgencyAddress"`
+		AgencyWebsite string                 `json:"AgencyWebsite"`
+		ExtractSystem string                 `json:"ExtractSystem"`
+		ExtractDate   HeaderExtractTimestamp `json:"ExtractDate"`
+		ExtractQuery  string                 `json:"ExtractQuery"`
 	} `json:"Header"`
 	ProjectManagerID int `json:"ProjectManagerId"`
 	ProjectManager   struct {
@@ -113,4 +122,15 @@ type Project struct {
 		EmailAddress     string `json:"EmailAddress"`
 		ActiveIndicator  bool   `json:"ActiveIndicator"`
 	} `json:"ProjectManager"`
+}
+
+func DecodeProject(r io.Reader) (*Project, error) {
+	var err error
+	var project Project
+
+	if err = json.NewDecoder(r).Decode(&project); err != nil {
+		return nil, err
+	}
+
+	return &project, nil
 }

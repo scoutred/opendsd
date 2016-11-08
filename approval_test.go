@@ -149,7 +149,7 @@ var approvalTestData = `
 	}]
 }`
 
-func TestParseApproval(t *testing.T) {
+func TestDecodApproval(t *testing.T) {
 	var err error
 
 	buf := bytes.NewBufferString(approvalTestData)
