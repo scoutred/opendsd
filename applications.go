@@ -48,8 +48,8 @@ func (ad *ApplicationDatestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElem
 }
 
 type Applications struct {
-	Metadata  Metadata   `xml:"metadata"`
-	Approvals []Approval `xml:"approvals>approval"`
+	Metadata  Metadata              `xml:"metadata"`
+	Approvals []ApplicationApproval `xml:"approvals>approval"`
 }
 
 type Metadata struct {
@@ -70,7 +70,7 @@ type DataExtract struct {
 	RequestID     string               `xml:"request_id"`
 }
 
-type Approval struct {
+type ApplicationApproval struct {
 	XMLName         xml.Name             `xml:"approval"`
 	ID              string               `xml:"approval_id,attr"`
 	Type            string               `xml:"approval_type"`

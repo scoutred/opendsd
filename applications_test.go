@@ -5,10 +5,10 @@ import (
 	"log"
 	"testing"
 
-	"github.com/scoutred/importer/cmd/cities/san_diego/opendsd"
+	"github.com/scoutred/opendsd"
 )
 
-var testApplicationData = `
+var applicationTestData = `
 <?xml version="1.0" encoding="UTF-8"?>
 <extract_results>
   <!--City of San Diego Development Services Department-->
@@ -45,7 +45,7 @@ var testApplicationData = `
 func TestParseApplications(t *testing.T) {
 	var err error
 
-	buf := bytes.NewBufferString(testApplicationData)
+	buf := bytes.NewBufferString(applicationTestData)
 
 	applications, err := opendsd.DecodeApplication(buf)
 	if err != nil {
