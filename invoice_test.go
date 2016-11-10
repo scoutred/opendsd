@@ -239,3 +239,14 @@ func TestDecodeInvoice(t *testing.T) {
 
 	log.Printf("invoice %+v", invoice)
 }
+
+func TestInvoiceByID(t *testing.T) {
+	var err error
+
+	invoice, err := opendsd.InvoiceByID(483626)
+	if err != nil {
+		t.Errorf("InvoiceByID error: %v", err)
+	}
+
+	log.Printf("invoice %+v", invoice)
+}

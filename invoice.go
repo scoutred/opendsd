@@ -2,11 +2,9 @@ package opendsd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
-)
-
-const (
-	InvoiceEndpoint = "http://opendsd.sandiego.gov/api/invoice/:id"
+	"net/http"
 )
 
 type Invoice struct {
@@ -104,4 +102,27 @@ func DecodeInvoice(r io.Reader) (*Invoice, error) {
 	}
 
 	return &invoice, nil
+}
+
+func InvoiceByID(id int) (*Invoice, error) {
+	//	build our request url
+	url := fmt.Sprintf("http://opendsd.sandiego.gov/api/invoice/%v", id)
+	//	build our request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+
+	//	the API returns a 302 (Temporary Redirect) status code but does
+	//	not provide a Location header for the redirect. Because of this
+	//	we need to use a DefaultTransport rather than client.Do()
+	//	make our request
+	resp, err := http.DefaultTransport.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return DecodeInvoice(resp.Body)
 }

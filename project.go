@@ -2,11 +2,9 @@ package opendsd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
-)
-
-const (
-	ProjectEndpoint = "http://opendsd.sandiego.gov/api/project/:id"
+	"net/http"
 )
 
 type Project struct {
@@ -133,4 +131,27 @@ func DecodeProject(r io.Reader) (*Project, error) {
 	}
 
 	return &project, nil
+}
+
+func ProjectByID(id int) (*Project, error) {
+	//	build our request url
+	url := fmt.Sprintf("http://opendsd.sandiego.gov/api/project/%v", id)
+	//	build our request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+
+	//	the API returns a 302 (Temporary Redirect) status code but does
+	//	not provide a Location header for the redirect. Because of this
+	//	we need to use a DefaultTransport rather than client.Do()
+	//	make our request
+	resp, err := http.DefaultTransport.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return DecodeProject(resp.Body)
 }

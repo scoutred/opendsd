@@ -2,11 +2,9 @@ package opendsd
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
-)
-
-const (
-	ApprovalEndpoint = "http://opendsd.sandiego.gov/api/approval/:id"
+	"net/http"
 )
 
 type Approval struct {
@@ -158,4 +156,27 @@ func DecodeApproval(r io.Reader) (*Approval, error) {
 	}
 
 	return &approval, nil
+}
+
+func ApprovalByID(id int) (*Approval, error) {
+	//	build our request url
+	url := fmt.Sprintf("http://opendsd.sandiego.gov/api/approval/%v", id)
+	//	build our request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+
+	//	the API returns a 302 (Temporary Redirect) status code but does
+	//	not provide a Location header for the redirect. Because of this
+	//	we need to use a DefaultTransport rather than client.Do()
+	//	make our request
+	resp, err := http.DefaultTransport.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return DecodeApproval(resp.Body)
 }

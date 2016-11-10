@@ -140,3 +140,14 @@ func TestDecodeProject(t *testing.T) {
 
 	log.Printf("project %+v", project)
 }
+
+func TestProjectByID(t *testing.T) {
+	var err error
+
+	project, err := opendsd.ProjectByID(319781)
+	if err != nil {
+		t.Errorf("ProjectByID error: %v", err)
+	}
+
+	log.Printf("project %+v", project)
+}

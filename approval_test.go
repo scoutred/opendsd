@@ -161,3 +161,14 @@ func TestDecodApproval(t *testing.T) {
 
 	log.Printf("approval %+v", approval)
 }
+
+func TestApprovalByID(t *testing.T) {
+	var err error
+
+	approval, err := opendsd.ApprovalByID(1117208)
+	if err != nil {
+		t.Errorf("ApprovalByID error: %v", err)
+	}
+
+	log.Printf("approval %+v", approval)
+}

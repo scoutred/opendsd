@@ -6,10 +6,14 @@ import (
 )
 
 const (
-	APIRoot                      = "http://opendsd.sandiego.gov/api"
+	APIHost                      = "http://opendsd.sandiego.gov"
 	HeaderExtractTimestampFormat = "1/2/2006 3:04:05 PM"
 	TimestampFormat              = "2006-01-02T15:04:05"
 )
+
+type Error struct {
+	Message string `json:"Message"`
+}
 
 type HeaderExtractTimestamp time.Time
 
