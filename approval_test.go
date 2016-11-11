@@ -2,7 +2,10 @@ package opendsd_test
 
 import (
 	"bytes"
+	"fmt"
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/scoutred/opendsd"
@@ -163,9 +166,23 @@ func TestDecodApproval(t *testing.T) {
 }
 
 func TestApprovalByID(t *testing.T) {
-	var err error
+	//	setup test muxer
+	mux := http.NewServeMux()
+	//	register our test route
+	mux.HandleFunc("/approval/1117208",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, invoiceTestData)
+		},
+	)
 
-	approval, err := opendsd.ApprovalByID(1117208)
+	//	setup test server
+	server := httptest.NewServer(mux)
+	//	setup test client
+	client := opendsd.NewClient()
+	//	use the dynamically generated testing url
+	client.APIRoot = server.URL
+
+	approval, err := client.ApprovalByID(1117208)
 	if err != nil {
 		t.Errorf("ApprovalByID error: %v", err)
 	}

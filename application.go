@@ -59,6 +59,10 @@ func DecodeApplication(r io.Reader) (*Applications, error) {
 
 type ApplicationTimestamp time.Time
 
+func (at ApplicationTimestamp) String() string {
+	return time.Time(at).Format(time.RFC3339)
+}
+
 func (at *ApplicationTimestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var val string
 	d.DecodeElement(&val, &start)
@@ -69,10 +73,6 @@ func (at *ApplicationTimestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElem
 	}
 	*at = ApplicationTimestamp(v)
 	return nil
-}
-
-func (at ApplicationTimestamp) String() string {
-	return time.Time(at).Format(time.RFC3339)
 }
 
 type ApplicationDatestamp time.Time

@@ -2,7 +2,10 @@ package opendsd_test
 
 import (
 	"bytes"
+	"fmt"
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/scoutred/opendsd"
@@ -144,7 +147,23 @@ func TestDecodeProject(t *testing.T) {
 func TestProjectByID(t *testing.T) {
 	var err error
 
-	project, err := opendsd.ProjectByID(319781)
+	//	setup test muxer
+	mux := http.NewServeMux()
+	//	register our test route
+	mux.HandleFunc("/project/319781",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, projectTestData)
+		},
+	)
+
+	//	setup test server
+	server := httptest.NewServer(mux)
+	//	setup test client
+	client := opendsd.NewClient()
+	//	use the dynamically generated testing url
+	client.APIRoot = server.URL
+
+	project, err := client.ProjectByID(319781)
 	if err != nil {
 		t.Errorf("ProjectByID error: %v", err)
 	}

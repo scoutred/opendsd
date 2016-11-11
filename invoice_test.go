@@ -2,7 +2,10 @@ package opendsd_test
 
 import (
 	"bytes"
+	"fmt"
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/scoutred/opendsd"
@@ -243,7 +246,23 @@ func TestDecodeInvoice(t *testing.T) {
 func TestInvoiceByID(t *testing.T) {
 	var err error
 
-	invoice, err := opendsd.InvoiceByID(483626)
+	//	setup test muxer
+	mux := http.NewServeMux()
+	//	register our test route
+	mux.HandleFunc("/invoice/483626",
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, invoiceTestData)
+		},
+	)
+
+	//	setup test server
+	server := httptest.NewServer(mux)
+	//	setup test client
+	client := opendsd.NewClient()
+	//	use the dynamically generated testing url
+	client.APIRoot = server.URL
+
+	invoice, err := client.InvoiceByID(483626)
 	if err != nil {
 		t.Errorf("InvoiceByID error: %v", err)
 	}
