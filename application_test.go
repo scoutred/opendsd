@@ -54,5 +54,3 @@ func TestDecodApplications(t *testing.T) {
 
 	log.Printf("%+v", applications)
 }
-
-//  curl 'http://opendsd.sandiego.gov/api/approval/1117208' -H 'Pragma: no-cache' -H 'Accept-Encoding: gzip, deflate, sdch' -H 'Accept-Language: en-US,en;q=0.8' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36' -H 'Accept: application/json' -H 'Cache-Control: no-cache' -H 'Cookie: __cfduid=da5f8a189ad7f88ad881e454b387d611b1477864804; vxv=2015041001; vxu=EO_47RRkFu7I0JF2z9edzg; vxr=87.81; vxp=12; vxl=1477865568; _ga=GA1.2.445451898.1477864807' -H 'Connection: keep-alive' --compressed
