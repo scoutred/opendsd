@@ -13,8 +13,12 @@ const (
 	TimestampFormat              = "2006-01-02T15:04:05"
 )
 
-type Error struct {
-	Message string `json:"Message"`
+type APIError struct {
+	Message string `json:"ErrorMessage"`
+}
+
+func (a APIError) Error() string {
+	return a.Message
 }
 
 type Client struct {
@@ -58,7 +62,18 @@ func (c *Client) get(uri string, v interface{}) error {
 	defer resp.Body.Close()
 
 	//	decode our response body into the provided interface
-	return json.NewDecoder(resp.Body).Decode(&v)
+	if err = json.NewDecoder(resp.Body).Decode(&v); err != nil {
+		//	check if we have an error message. This API returns a 302
+		//	for both successes and fails
+		var apiError APIError
+		if err = json.NewDecoder(resp.Body).Decode(&apiError); err != nil {
+			return err
+		}
+
+		return apiError
+	}
+
+	return nil
 }
 
 type HeaderExtractTimestamp time.Time
