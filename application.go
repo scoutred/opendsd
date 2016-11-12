@@ -51,7 +51,7 @@ func DecodeApplication(r io.Reader) (Applications, error) {
 	var applications Applications
 
 	if err = xml.NewDecoder(r).Decode(&applications); err != nil {
-		return nil, err
+		return applications, err
 	}
 
 	return applications, nil
