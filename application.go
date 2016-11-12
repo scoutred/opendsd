@@ -46,7 +46,7 @@ type ApplicationApproval struct {
 	ApplicationDate ApplicationTimestamp `xml:"application_date"`
 }
 
-func DecodeApplication(r io.Reader) (*Applications, error) {
+func DecodeApplication(r io.Reader) (Applications, error) {
 	var err error
 	var applications Applications
 
@@ -54,7 +54,7 @@ func DecodeApplication(r io.Reader) (*Applications, error) {
 		return nil, err
 	}
 
-	return &applications, nil
+	return applications, nil
 }
 
 type ApplicationTimestamp time.Time
