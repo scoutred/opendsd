@@ -1,15 +1,5 @@
 package opendsd_test
 
-import (
-	"bytes"
-	"encoding/csv"
-	"fmt"
-	"io"
-	"testing"
-
-	"github.com/scoutred/opendsd"
-)
-
 var remedyTypesTestData = `
 10,1,Case Opened,5,102,Inspection Prep
 10,1,Case Opened,20,82,Converted From M20 Legacy Application
@@ -101,8 +91,8 @@ var remedyTypesTestData = `
 20000,25,Grafitti,150,97,Refer to Urban Corp
 20000,25,Grafitti,200,96,Abatement`
 
+/*
 func TestDecodeRemedyTypes(t *testing.T) {
-
 	buf := bytes.NewBufferString(remedyTypesTestData)
 
 	r := csv.NewReader(buf)
@@ -127,3 +117,4 @@ func TestDecodeRemedyTypes(t *testing.T) {
 		fmt.Printf("%+v\n", rec)
 	}
 }
+*/
