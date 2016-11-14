@@ -141,5 +141,12 @@ func (c *Client) ProjectByID(id int) (*Project, error) {
 		return nil, err
 	}
 
+	//	this is necessary since the API does not report a 404 on not found responses
+	if p.ProjectID != id {
+		return nil, APIError{
+			ErrorMessage: fmt.Sprintf("Project with ID: %v could not be found.", id),
+		}
+	}
+
 	return &p, nil
 }

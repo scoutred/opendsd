@@ -171,7 +171,7 @@ func TestApprovalByID(t *testing.T) {
 	//	register our test route
 	mux.HandleFunc("/approval/1117208",
 		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, invoiceTestData)
+			fmt.Fprint(w, approvalTestData)
 		},
 	)
 
@@ -179,7 +179,7 @@ func TestApprovalByID(t *testing.T) {
 	server := httptest.NewServer(mux)
 	//	setup test client
 	client := opendsd.NewClient()
-	//	use the dynamically generated testing url
+	//	use the generated testing url
 	client.APIRoot = server.URL
 
 	approval, err := client.ApprovalByID(1117208)

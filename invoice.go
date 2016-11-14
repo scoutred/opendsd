@@ -112,5 +112,12 @@ func (c *Client) InvoiceByID(id int) (*Invoice, error) {
 		return nil, err
 	}
 
+	//	this is necessary since the API does not report a 404 on not found responses
+	if i.InvoiceID != id {
+		return nil, APIError{
+			ErrorMessage: fmt.Sprintf("Invoice with ID: %v could not be found.", id),
+		}
+	}
+
 	return &i, nil
 }

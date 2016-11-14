@@ -259,7 +259,7 @@ func TestInvoiceByID(t *testing.T) {
 	server := httptest.NewServer(mux)
 	//	setup test client
 	client := opendsd.NewClient()
-	//	use the dynamically generated testing url
+	//	use the generated testing url
 	client.APIRoot = server.URL
 
 	invoice, err := client.InvoiceByID(483626)

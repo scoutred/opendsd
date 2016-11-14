@@ -14,11 +14,11 @@ const (
 )
 
 type APIError struct {
-	Message string `json:"ErrorMessage"`
+	ErrorMessage string `json:"ErrorMessage"`
 }
 
 func (a APIError) Error() string {
-	return a.Message
+	return a.ErrorMessage
 }
 
 type Client struct {
@@ -62,18 +62,13 @@ func (c *Client) get(uri string, v interface{}) error {
 	defer resp.Body.Close()
 
 	//	decode our response body into the provided interface
-	if err = json.NewDecoder(resp.Body).Decode(&v); err != nil {
-		//	check if we have an error message. This API returns a 302
-		//	for both successes and fails
-		var apiError APIError
-		if err = json.NewDecoder(resp.Body).Decode(&apiError); err != nil {
-			return err
-		}
+	return json.NewDecoder(resp.Body).Decode(&v)
 
-		return apiError
-	}
-
-	return nil
+	//	TODO: currently we don't handle response errors. The API will provide
+	//	a JSON message in the form {"ErrorMessage": "the error message"} but
+	//	does not provide an status code to key off when an error occurs.
+	//	for now each Cleint call needs to check the ID of the request against
+	//	the response to confirm a payload was successfully decoded.
 }
 
 type HeaderExtractTimestamp time.Time

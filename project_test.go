@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/scoutred/opendsd"
@@ -145,28 +146,47 @@ func TestDecodeProject(t *testing.T) {
 }
 
 func TestProjectByID(t *testing.T) {
-	var err error
-
-	//	setup test muxer
-	mux := http.NewServeMux()
-	//	register our test route
-	mux.HandleFunc("/project/319781",
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprint(w, projectTestData)
+	testcases := []struct {
+		projectID int
+		expected  string
+	}{
+		{
+			projectID: 512321,
+			expected:  projectTestData,
 		},
-	)
-
-	//	setup test server
-	server := httptest.NewServer(mux)
-	//	setup test client
-	client := opendsd.NewClient()
-	//	use the dynamically generated testing url
-	client.APIRoot = server.URL
-
-	project, err := client.ProjectByID(319781)
-	if err != nil {
-		t.Errorf("ProjectByID error: %v", err)
 	}
 
-	log.Printf("project %+v", project)
+	for i, tc := range testcases {
+		//	setup test muxer
+		mux := http.NewServeMux()
+		//	register our test route
+		mux.HandleFunc(fmt.Sprintf("/project/%v", tc.projectID), func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, tc.expected)
+		})
+
+		//	setup test server
+		server := httptest.NewServer(mux)
+		//	setup test client
+		client := opendsd.NewClient()
+		//	use the generated testing url
+		client.APIRoot = server.URL
+
+		//	fetch our project
+		project, err := client.ProjectByID(tc.projectID)
+		if err != nil {
+			t.Errorf("ProjectByID error: %v", err)
+		}
+
+		//	decode our expected struct
+		buf := bytes.NewBufferString(tc.expected)
+		expected, err := opendsd.DecodeProject(buf)
+		if err != nil {
+			t.Errorf("error parsing: %v", err)
+		}
+
+		//	compare result to expected
+		if !reflect.DeepEqual(project, expected) {
+			t.Errorf("test (%v) failed. expected and returned do not match", i)
+		}
+	}
 }

@@ -166,5 +166,12 @@ func (c *Client) ApprovalByID(id int) (*Approval, error) {
 		return nil, err
 	}
 
+	//	this is necessary since the API does not report a 404 on not found responses
+	if a.ApprovalID != id {
+		return nil, APIError{
+			ErrorMessage: fmt.Sprintf("Approval with ID: %v could not be found.", id),
+		}
+	}
+
 	return &a, nil
 }
