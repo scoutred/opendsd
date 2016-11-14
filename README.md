@@ -12,9 +12,10 @@ Supports the following:
 - Approval API (JSON)
 - Code Enforcement API (JSON)
 - Code Enforcement cases (XML) - published periodically [here](https://www.sandiego.gov/development-services/opendsd/codenforcement)
+- Mapped [Complaint Type Codes](https://www.sandiego.gov/sites/default/files/legacy/development-services/opendsd/csv/complaintypes.csv)
+- Mapped Approval Type Codes
 
 TODO 
-- [ ] Support [complaint type codes](https://www.sandiego.gov/sites/default/files/legacy/development-services/opendsd/csv/complaintypes.csv)
 - [ ] Support [code enforcement remedies](https://www.sandiego.gov/sites/default/files/legacy/development-services/opendsd/csv/codenforcementremedies.csv)
 
 ## Usage
