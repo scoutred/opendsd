@@ -22,7 +22,7 @@ TODO
 
 ```go
 
-pacakge main
+package main
 
 import (
 	"log"
