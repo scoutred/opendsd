@@ -34,8 +34,8 @@ type CodeEnforcementCases struct {
 		MapReference             string      `xml:"map_reference"`
 		Lat                      float64     `xml:"latitude"`
 		Lon                      float64     `xml:"longitude"`
-		NAD83Northing            interface{} `xml:"nad83_northing"`
-		NAD83Easting             interface{} `xml:"nad83_easting"`
+		NAD83Northing            string      `xml:"nad83_northing"`
+		NAD83Easting             string      `xml:"nad83_easting"`
 		Workgroup                string      `xml:"workgroup"`
 		InvestigatorName         string      `xml:"investigator_name"`
 		InvestigatorPhoneNumber  string      `xml:"investigator_phone_number"`
