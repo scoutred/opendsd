@@ -25,6 +25,9 @@ type CodeEnforcementCases struct {
 		CaseSource               string      `xml:"case_source"`
 		Description              string      `xml:"description"`
 		OpenDate                 string      `xml:"open_date"`
+		CloseDate                string      `xml:"close_date"`
+		CloseReason              string      `xml:"close_reason"`
+		CloseNote                string      `xml:"close_note"`
 		APN                      string      `xml:"apn"`
 		StreetAddress            string      `xml:"street_address"`
 		SortableStreetAddress    string      `xml:"sortable_street_address"`
