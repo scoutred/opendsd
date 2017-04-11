@@ -28,7 +28,7 @@ type CodeEnforcementCases struct {
 		CloseDate                string      `xml:"close_date"`
 		CloseReason              string      `xml:"close_reason"`
 		CloseNote                string      `xml:"close_note"`
-		APN                      string      `xml:"apn"`
+		APN                      string      `xml:"APN"`
 		StreetAddress            string      `xml:"street_address"`
 		SortableStreetAddress    string      `xml:"sortable_street_address"`
 		MapReference             string      `xml:"map_reference"`
