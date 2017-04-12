@@ -2,8 +2,10 @@ package opendsd_test
 
 import (
 	"bytes"
-	"log"
+	"encoding/xml"
+	"reflect"
 	"testing"
+	"time"
 
 	"github.com/scoutred/opendsd"
 )
@@ -57,13 +59,85 @@ var codeEnforcementTestCaseData = `
 </extract_results>`
 
 func TestDecodCodeEnforcementCases(t *testing.T) {
-	var err error
-
-	buf := bytes.NewBufferString(codeEnforcementTestCaseData)
-	cases, err := opendsd.DecodeCodeEnforcementCases(buf)
-	if err != nil {
-		t.Errorf("error parsing: %v", err)
+	testcases := []struct {
+		testdata string
+		expected opendsd.CodeEnforcementCases
+	}{
+		{
+			testdata: codeEnforcementTestCaseData,
+			expected: opendsd.CodeEnforcementCases{
+				Metadata: opendsd.Metadata{
+					Jurisdiction:  "City of San Diego",
+					Agency:        "Development Services Department",
+					AgencyAddress: "1222 First AV, San Diego, CA 92101",
+					AgencyWebsite: "http://www.sandiego.gov/development-services/",
+					DataExtract: opendsd.DataExtract{
+						ExtractSystem: "PTSxml Report Id: 203",
+						Query:         "VWXML_CECASES",
+						ExtractDate:   opendsd.ApplicationTimestamp(time.Date(2016, 11, 6, 22, 35, 0, 0, time.UTC)),
+						ReportTitle:   "Code Enforcement Report",
+					},
+				},
+				Cases: []opendsd.CodeEnforcementCase{
+					{
+						XMLName: xml.Name{
+							Local: "case",
+						},
+						ID:                       "3351",
+						CaseSource:               "Other City Department",
+						Description:              "GARAGE CONVERSN -   [Addr:  2034 JULIAN  AV   APN: 538-330-28   Owner: CORDERO, MARIE/NORMA ] ",
+						OpenDate:                 "1993-03-30",
+						CloseDate:                "",
+						CloseReason:              "",
+						CloseNote:                "",
+						APN:                      "5383302800",
+						StreetAddress:            "2034 JULIAN AV ",
+						SortableStreetAddress:    "JULIAN AV 0000002034 ",
+						MapReference:             "XXXX-XX",
+						Lat:                      32.70176,
+						Lon:                      -117.140165,
+						NAD83Northing:            "1836282",
+						NAD83Easting:             "6287823",
+						Workgroup:                "Zoning",
+						InvestigatorName:         "Vasquez, Edward",
+						InvestigatorPhoneNumber:  "(619)533-6275",
+						InvestigatorEmailAddress: "EAVasquez@sandiego.gov",
+						InvestigatorActive:       "Y",
+						LastAction:               "City Attorney Referral - Referred",
+						LastActionDueDate:        "2015-06-06",
+						RemedyMsg:                "New plans submitted & approved  with the CED Stamp for submittal to DSD Reveiw Section per VMN.",
+						Complaints: []opendsd.CodeEnforcementCaseComplaint{
+							{
+								XMLName: xml.Name{
+									Local: "complaint",
+								},
+								TypeID: "314",
+								Type:   "Zoning-Garage Conversion",
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 
-	log.Printf("%+v", cases)
+	for i, tc := range testcases {
+		buf := bytes.NewBufferString(tc.testdata)
+
+		output, err := opendsd.DecodeCodeEnforcementCases(buf)
+		if err != nil {
+			t.Errorf("testcase (%v) failed err: %v %v", i, err)
+			return
+		}
+
+		if !reflect.DeepEqual(output.Metadata, tc.expected.Metadata) {
+			t.Errorf("testcase (%v) failed. expected Metadata \n\n %+v \n\n does not match output Metadata \n\n %+v", i, tc.expected.Metadata, output.Metadata)
+			return
+		}
+
+		if !reflect.DeepEqual(output.Cases, tc.expected.Cases) {
+			t.Errorf("testcase (%v) failed. expected Cases \n\n %+v \n\n does not match output Cases \n\n %+v", i, tc.expected.Cases, output.Cases)
+			return
+		}
+	}
 }
