@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	APIRoot                      = "http://opendsd.sandiego.gov/api"
+	APIRoot                      = "https://opendsd.sandiego.gov/api"
 	HeaderExtractTimestampFormat = "1/2/2006 3:04:05 PM"
 	TimestampFormat              = "2006-01-02T15:04:05"
 )
